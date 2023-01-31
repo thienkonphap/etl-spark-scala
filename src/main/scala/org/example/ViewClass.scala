@@ -14,5 +14,6 @@ class ViewClass(rawDF: DataFrame) {
     // Add insert_date
     val update_date = finalDF.first().getString(9).substring(0, 10)
     finalDF.withColumn("insert_date", lit(update_date))
+
   }
 }

@@ -5,7 +5,7 @@ import java.util.Date
 
 object Utility {
   def getApi(url: String): String={
-    val result = (scala.io.Source.fromURL(url).mkString)
+    val result = scala.io.Source.fromURL(url).mkString
     result
   }
   def getCurrentDate(format: String): String={

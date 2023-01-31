@@ -1,5 +1,5 @@
 package org.example
-import org.apache.spark.sql.types.{StringType, StructType,DoubleType,DecimalType}
+import org.apache.spark.sql.types.{StringType, StructType,DoubleType}
 
 object CustomSchema {
   val schema = (new StructType)

@@ -1,10 +1,6 @@
 package org.example
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.SQLContext
-import org.apache.spark.sql.types.{StringType, StructType}
 import CustomSchema.schema
-
-import scala.util.parsing.json._
 
 /**
  * Hello world!
@@ -12,7 +8,7 @@ import scala.util.parsing.json._
  */
 object MainDriver{
   def main(args: Array[String]): Unit ={
-    //Initial SparkSession
+    //Initializing SparkSession
     val spark: SparkSession = SparkSession.builder()
       .appName("Test application")
       .master("local")
@@ -22,6 +18,8 @@ object MainDriver{
     // Get API
     val url = "https://cryptingup.com/api/assets/BTC"
     var result = Utility.getApi(url)
+
+
     result = result.substring(9,result.length-1)
     println(result)
 
@@ -45,8 +43,23 @@ object MainDriver{
       .format("parquet")
       .partitionBy("insert_date")
       .save("hdfs://localhost:9000/user/nguyenngocthien/user/dev/srv/")
+
     val df = spark.read.schema(schema).json("hdfs://localhost:9000/user/nguyenngocthien/user/dev/raw/20230129")
     df.show()
+
+    val sparkHive = SparkSession.builder()
+      .appName("Spark Session pour Hive")
+      .config("hive.metastore.uris", "thrift://localhost:9883")
+      .config("hive.exec.dynamic.partition","true")
+      .config("hive.exec.dynamic.partition.mode", "nonstrict")
+      .enableHiveSupport()
+      .getOrCreate()
+
+    finalDF.write
+      .format("hive")
+      .partitionBy("insert_date")
+      .mode("append")
+      .saveAsTable("price_bitcoin")
     println("End Programme")
   }
 }
